@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by Keep a Changelog, and this project loosely follows Semantic Versioning.
 
+## [1.0.0-alpha.3] - 2026-07-02
+
+### Fixed
+- Removed the `duckduckgo-search` dependency from installation.
+- Replaced the external web-search package with a lightweight built-in HTML search implementation.
+- Avoided the Rust/maturin/primp build failure on Termux during installation.
+- Reduced install friction and unnecessary compiler-heavy dependency pulls on Android.
+- Simplified the README install steps to avoid recommending a full `pkg upgrade` during first-time setup.
+
+### Notes
+- This release is focused on making first-time Termux installation succeed more reliably.
+- Web search remains basic and may evolve in future releases.
+
 ## [1.0.0-alpha.2] - 2026-07-02
 
 ### Changed

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import base64
+import html
 import json
 import re
 from pathlib import Path
 from typing import Any
-
-from duckduckgo_search import DDGS
+from urllib.parse import parse_qs, quote_plus, urlparse
+from urllib.request import Request, urlopen
 
 from .config import AppConfig, flexcli_home
 from .memory import MemoryStore
@@ -242,16 +244,64 @@ def _mkdir(ctx: ToolContext, path: str) -> str:
     return f"Папку створено: {target.relative_to(ctx.workspace)}"
 
 
+def _strip_html(text: str) -> str:
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _decode_bing_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.netloc not in {"www.bing.com", "bing.com"}:
+        return url
+
+    query = parse_qs(parsed.query)
+    raw = query.get("u", [""])[0]
+    if raw.startswith("a1") and len(raw) > 2:
+        try:
+            payload = raw[2:]
+            payload += "=" * ((4 - len(payload) % 4) % 4)
+            decoded = base64.urlsafe_b64decode(payload.encode("ascii")).decode("utf-8")
+            if decoded.startswith("http://") or decoded.startswith("https://"):
+                return decoded
+        except Exception:
+            pass
+    return url
+
+
+def _bing_text_search(query: str, max_results: int = 5) -> list[dict[str, str]]:
+    url = f"https://www.bing.com/search?q={quote_plus(query)}"
+    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    html_text = urlopen(req, timeout=20).read().decode("utf-8", "ignore")
+
+    pattern = re.compile(
+        r'<h2[^>]*><a[^>]+href="([^"]+)"[^>]*>(.*?)</a></h2>'
+        r'(?:<div class="b_caption"><p[^>]*>(.*?)</p>)?',
+        re.S,
+    )
+
+    items: list[dict[str, str]] = []
+    for match in pattern.finditer(html_text):
+        href, title_html, body_html = match.groups()
+        title = _strip_html(title_html)
+        href = _decode_bing_url(html.unescape(href))
+        body = _strip_html(body_html or "")
+        if title and href:
+            items.append({"title": title, "href": href, "body": body})
+        if len(items) >= max_results:
+            break
+    return items
+
+
 def _web_search(ctx: ToolContext, query: str, max_results: int = 5) -> str:
     if not ctx.cfg.web_search_enabled:
         return "Web search вимкнений у config.json"
     results: list[str] = []
-    with DDGS() as ddgs:
-        for idx, item in enumerate(ddgs.text(query, max_results=max_results), start=1):
-            title = item.get("title", "(без назви)")
-            href = item.get("href", "")
-            body = item.get("body", "")
-            results.append(f"{idx}. {title}\nURL: {href}\n{body}")
+    for idx, item in enumerate(_bing_text_search(query, max_results=max_results), start=1):
+        title = item.get("title", "(без назви)")
+        href = item.get("href", "")
+        body = item.get("body", "")
+        results.append(f"{idx}. {title}\nURL: {href}\n{body}")
     if not results:
         return f"Нічого не знайдено за запитом: {query}"
     return "\n\n".join(results)

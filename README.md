@@ -10,7 +10,7 @@
 
 Language: **English** | [Українська](README.ua.md) | [Русский](README.ru.md)
 
-> Current release: **1.0.0-alpha.2**
+> Current release: **1.0.0-alpha.3**
 
 ## Status
 FlexCLI is currently an **alpha-stage MVP**.
@@ -109,7 +109,7 @@ After first launch, FlexCLI creates:
 
 ### 1. Clone the repository
 ```bash
-pkg update && pkg upgrade -y
+pkg update
 pkg install git -y
 git clone https://github.com/GlomGing85/FlexCLI.git
 cd FlexCLI

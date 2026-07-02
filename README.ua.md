@@ -10,7 +10,7 @@
 
 Мова: [English](README.md) | **Українська** | [Русский](README.ru.md)
 
-> Поточний реліз: **1.0.0-alpha.2**
+> Поточний реліз: **1.0.0-alpha.3**
 
 ## Стан проєкту
 FlexCLI зараз у стадії **alpha / MVP**.
@@ -109,7 +109,7 @@ FlexCLI/
 
 ### 1. Клонування репозиторію
 ```bash
-pkg update && pkg upgrade -y
+pkg update
 pkg install git -y
 git clone https://github.com/GlomGing85/FlexCLI.git
 cd FlexCLI
