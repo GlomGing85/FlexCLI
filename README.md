@@ -1,37 +1,37 @@
 # FlexCLI
 
-**FlexCLI** — CLI чат-агент для **Android + Termux**, заточений під:
-- спілкування
-- кодинг
-- роботу з файлами та папками
+**FlexCLI** is a terminal AI assistant for **Android + Termux** focused on:
+- chatting
+- coding help
+- file and folder operations
 - web search
-- пам'ять
-- створення нових скілів
+- memory
+- skill scaffolding for future extensions
 
-> Поточний статус: **1.0.0-alpha.1**
+Language: **English** | [Українська](README.ua.md) | [Русский](README.ru.md)
 
-Це **MVP / starter repo**, який уже підготовлений як GitHub-репозиторій і зручно ставиться / оновлюється на телефоні.
+> Current release: **1.0.0-alpha.2**
 
-## Repo docs
-- `README.md` — головна інструкція
-- `CHANGELOG.md` — історія змін
-- `CONTRIBUTING.md` — правила для внесків
-- `RELEASE.md` — чекліст для релізів
-- `LICENSE` — MIT
+## Status
+FlexCLI is currently an **alpha-stage MVP**.
+It already works as a local CLI agent scaffold, but it is still evolving and not production-ready.
 
----
+At the moment:
+- the main docs are multilingual
+- the CLI interface itself is still mostly Ukrainian
+- runtime language selection is planned for a future release
 
-## 1. Що вже є в цьому репо
+## Features
 
 ### Core
-- CLI REPL
-- агентний цикл через tool calling
-- NVIDIA API client
-- SQLite memory
-- workspace sandbox
+- interactive CLI chat loop
+- NVIDIA API integration through an OpenAI-compatible endpoint
+- agent loop with tool/function calling
 - JSON config
+- workspace sandbox
+- SQLite-based memory
 
-### Skills / Tools
+### Built-in tools
 - `list_files`
 - `read_file`
 - `write_file`
@@ -42,7 +42,7 @@
 - `search_memory`
 - `create_skill`
 
-### Команди в CLI
+### Current CLI commands
 - `/help`
 - `/config`
 - `/mem`
@@ -53,9 +53,7 @@
 - `/set genskills on|off`
 - `/exit`
 
----
-
-## 2. Структура репозиторію
+## Repository structure
 
 ```text
 FlexCLI/
@@ -65,12 +63,14 @@ FlexCLI/
 ├─ CHANGELOG.md
 ├─ CONTRIBUTING.md
 ├─ RELEASE.md
+├─ README.md
+├─ README.ua.md
+├─ README.ru.md
 ├─ install-termux.sh
 ├─ update-termux.sh
 ├─ run.sh
 ├─ pyproject.toml
 ├─ requirements.txt
-├─ README.md
 ├─ .github/
 │  ├─ workflows/python-ci.yml
 │  ├─ PULL_REQUEST_TEMPLATE.md
@@ -88,7 +88,7 @@ FlexCLI/
    └─ skills.py
 ```
 
-Після першого запуску буде створено:
+After first launch, FlexCLI creates:
 
 ```text
 ~/.flexcli/
@@ -99,109 +99,58 @@ FlexCLI/
 └─ workspace/
 ```
 
----
+## Requirements
+- Android device
+- [Termux](https://termux.dev/)
+- Python available in Termux
+- NVIDIA API key (`nvapi-...`)
 
-## 3. Публікація на GitHub
+## Installation on Termux
 
-### Варіант A — якщо ти вже маєш цю папку локально
-
-```bash
-cd ~/FlexCLI
-git init
-git add .
-git commit -m "Initial FlexCLI MVP"
-git branch -M main
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/FlexCLI.git
-git push -u origin main
-```
-
-### Варіант B — створити репо на GitHub спочатку
-1. Зайди на GitHub.
-2. Створи новий repo: `FlexCLI`.
-3. Не додавай `README`, якщо ти вже маєш цей проєкт локально.
-4. Скопіюй URL репозиторію.
-5. Виконай команди з блоку вище.
-
----
-
-## 4. Встановлення на Android через Termux
-
-### Швидкий спосіб
-
+### 1. Clone the repository
 ```bash
 pkg update && pkg upgrade -y
 pkg install git -y
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/FlexCLI.git
+git clone https://github.com/GlomGing85/FlexCLI.git
 cd FlexCLI
+```
+
+### 2. Run the installer
+```bash
 bash install-termux.sh
 ```
 
-Після цього:
-
+### 3. Add your NVIDIA API key
 ```bash
 nano ~/.flexcli/.env
 ```
 
-Встав свій ключ:
-
+Paste:
 ```env
 NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-Потім запуск:
-
+### 4. Start FlexCLI
 ```bash
 flexcli
 ```
 
----
-
-## 5. Оновлення з GitHub
-
-Якщо ти поставив FlexCLI через `git clone`, оновлення робиться так:
+## Updating
+If FlexCLI was installed from GitHub:
 
 ```bash
 cd ~/FlexCLI
 bash update-termux.sh
 ```
 
-Що робить `update-termux.sh`:
-1. перевіряє, чи немає незакомічених змін
-2. робить `git pull --ff-only`
-3. перевстановлює Python-залежності
-4. оновлює launcher-команду `flexcli`
-
-> Якщо ти сам міняв код локально, спочатку зроби commit або stash.
-
----
-
-## 6. Launcher-команда
-
-Скрипт `install-termux.sh` автоматично створює глобальну команду:
-
-```bash
-flexcli
-```
-
-Вона запускає FlexCLI через `.venv`, тому тобі не потрібно щоразу вручну активувати virtualenv.
-
-Якщо хочеш запустити прямо з папки проєкту:
-
-```bash
-./run.sh
-```
-
----
-
-## 7. Конфігурація
-
-Файл:
+## Configuration
+Main config file:
 
 ```bash
 ~/.flexcli/config.json
 ```
 
-Приклад:
+Example:
 
 ```json
 {
@@ -215,142 +164,69 @@ flexcli
   "enable_generated_skills": false,
   "workspace_dir": "/data/data/com.termux/files/home/.flexcli/workspace",
   "db_path": "/data/data/com.termux/files/home/.flexcli/memory.db",
-  "system_prompt": "Ти — FlexCLI..."
+  "system_prompt": "You are FlexCLI..."
 }
 ```
 
-### Де краще зберігати ключ
-FlexCLI тепер читає `.env` з кількох місць:
+### Where to store the API key
+FlexCLI can read `.env` from:
 - `~/.flexcli/.env`
-- `.env` у корені репозиторію
-- `.env` у поточній папці запуску
+- `.env` in the repository root
+- `.env` in the current working directory
 
-Рекомендований варіант для Termux:
+Recommended for Termux:
 
 ```bash
 ~/.flexcli/.env
 ```
 
----
-
-## 8. Як працює пам'ять
+## Memory model
+FlexCLI currently uses two simple memory layers:
 
 ### Short-term memory
-Останні повідомлення зберігаються в SQLite.
+Recent conversation history stored in SQLite.
 
 ### Long-term memory
-Окремі важливі факти зберігаються через `save_memory`.
+Useful user preferences and persistent notes stored separately.
 
-Корисно зберігати:
-- улюблену мову програмування
-- стиль відповідей
-- назви проєктів
-- важливі шляхи
-- довгі задачі
+Good examples of what to store:
+- preferred programming language
+- preferred response style
+- project names
+- important paths
+- long-term tasks
 
----
-
-## 9. Як працює CreateSkill
-
-`create_skill` зараз створює файл у:
+## Skill generation
+The `create_skill` tool currently creates a Python scaffold inside:
 
 ```bash
 ~/.flexcli/generated_skills/
 ```
 
-Це **безпечний starter-підхід**:
-- агент генерує шаблон
-- ти його переглядаєш
-- ти сам вирішуєш, коли активувати логіку
+This is intentional.
+Generated skills are scaffolded safely and are **not auto-executed by default**.
 
-Тобто агент не отримує автоматичне право виконувати довільний самогенерований код.
+## Roadmap
 
----
+### Alpha / MVP
+- chat
+- file tools
+- memory
+- web search
+- config
+- skill scaffolding
 
-## 10. Roadmap
-
-### V1
-- чат
-- файли
-- пам'ять
-- пошук
-- налаштування
-- create_skill
-
-### V2
+### Next steps
 - streaming output
 - `/mode chat|code|research`
-- `append_file`
-- `delete_file` з confirm
-- `run_python`
-- автозавантаження generated skills
-- plugin loader
+- append/delete tools with confirmations
+- safer code execution
+- autoload for generated skills
+- better search and summarization
+- CLI language selection
 
-### V3
-- voice mode
-- sync між пристроями
-- semantic memory
-- локальні embeddings
-- advanced tool registry
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
----
-
-## 11. Типовий workflow для тебе
-
-### Перший раз
-```bash
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/FlexCLI.git
-cd FlexCLI
-bash install-termux.sh
-nano ~/.flexcli/.env
-flexcli
-```
-
-### Коли вийшло оновлення
-```bash
-cd ~/FlexCLI
-bash update-termux.sh
-```
-
-### Коли хочеш змінити модель
-У самому FlexCLI:
-
-```text
-/set model nvidia/llama-3.3-nemotron-super-49b-v1.5
-```
-
----
-
-## 12. Рекомендації по GitHub-репо
-
-Зараз у репо вже є:
-- `LICENSE` (MIT)
-- `CHANGELOG.md`
-- `CONTRIBUTING.md`
-- `RELEASE.md`
-- GitHub CI
-- issue / PR templates
-
-Я б радив далі:
-- repo name: **FlexCLI**
-- visibility: спочатку **private**, потім можна зробити public
-- використовувати GitHub Releases
-- додати `CHANGELOG`-нотатки до кожного релізу
-- згодом додати окрему сторінку з прикладами скілів
-
-Для alpha-версій зручно робити теги так:
-- `v1.0.0-alpha.1`
-- `v1.0.0-alpha.2`
-- `v1.0.0-beta.1`
-
----
-
-## 13. Якщо коротко
-
-Щоб FlexCLI було зручно ставити й оновлювати, найкращий підхід такий:
-- зберігати код у GitHub repo
-- ставити через `git clone`
-- інсталювати через `install-termux.sh`
-- оновлювати через `update-termux.sh`
-- ключ тримати в `~/.flexcli/.env`
-- конфіг і пам'ять тримати в `~/.flexcli/`
+## License
+MIT — see [LICENSE](LICENSE).

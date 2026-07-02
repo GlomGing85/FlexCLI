@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flexcli"
-version = "1.0.0a1"
+version = "1.0.0a2"
 description = "FlexCLI: CLI chat agent for Android/Termux using NVIDIA NIM"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by Keep a Changelog, and this project loosely follows Semantic Versioning.
 
+## [1.0.0-alpha.2] - 2026-07-02
+
+### Changed
+- Repository structure cleaned up so project files live in the repository root.
+- Main `README.md` rewritten for public GitHub usage in English.
+- Added `README.ua.md` and `README.ru.md` for Ukrainian and Russian documentation.
+- Removed internal-oriented wording from public-facing docs.
+
+### Notes
+- This release focuses on documentation and repository usability.
+- CLI runtime language selection is planned for a future release.
+
 ## [1.0.0-alpha.1] - 2026-07-01
 
 ### Added
