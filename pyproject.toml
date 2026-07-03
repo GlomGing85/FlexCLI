@@ -4,12 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flexcli"
-version = "1.0.0a3"
+version = "1.0.0a4"
 description = "FlexCLI: CLI chat agent for Android/Termux using NVIDIA NIM"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  "openai>=1.40.0",
   "python-dotenv>=1.0.1",
 ]
 

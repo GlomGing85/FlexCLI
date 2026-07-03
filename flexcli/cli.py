@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 
+from . import __version__
 from .agent import FlexAgent
 from .client import MissingAPIKeyError, build_client
 from .config import AppConfig, config_path, config_summary, load_config, save_config

@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is inspired by Keep a Changelog, and this project loosely follows Semantic Versioning.
 
+## [1.0.0-alpha.4] - 2026-07-02
+
+### Fixed
+- Removed the `openai` SDK dependency from installation.
+- Replaced the SDK with a minimal built-in OpenAI-compatible HTTP client for NVIDIA endpoints.
+- Avoided the `jiter` / `maturin` / Rust build failure on Termux during installation.
+- Fixed a CLI startup issue where `__version__` was referenced without being imported.
+
+### Notes
+- This release is focused on making first-time Termux installation succeed with fewer native-build dependencies.
+- FlexCLI now relies mainly on the Python standard library plus `python-dotenv`.
+
 ## [1.0.0-alpha.3] - 2026-07-02
 
 ### Fixed

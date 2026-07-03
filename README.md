@@ -10,7 +10,7 @@
 
 Language: **English** | [Українська](README.ua.md) | [Русский](README.ru.md)
 
-> Current release: **1.0.0-alpha.3**
+> Current release: **1.0.0-alpha.4**
 
 ## Status
 FlexCLI is currently an **alpha-stage MVP**.

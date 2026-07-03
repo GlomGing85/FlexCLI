@@ -8,6 +8,27 @@ from .memory import MemoryStore
 from .skills import ToolContext, execute_tool, tool_specs
 
 
+def _normalize_content(content: Any) -> str:
+    if content is None:
+        return ""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                if item.get("type") == "text":
+                    parts.append(str(item.get("text", "")))
+                elif "text" in item:
+                    parts.append(str(item.get("text", "")))
+                else:
+                    parts.append(json.dumps(item, ensure_ascii=False))
+            else:
+                parts.append(str(item))
+        return "\n".join(p for p in parts if p).strip()
+    return str(content)
+
+
 class FlexAgent:
     def __init__(self, client: Any, cfg: AppConfig, memory: MemoryStore):
         self.client = client
@@ -51,35 +72,36 @@ class FlexAgent:
         tools = tool_specs()
 
         for _ in range(self.cfg.max_tool_rounds):
-            response = self.client.chat.completions.create(
+            response = self.client.create_chat_completion(
                 model=self.cfg.model,
                 messages=messages,
                 tools=tools,
                 tool_choice="auto",
                 temperature=self.cfg.temperature,
             )
-            msg = response.choices[0].message
-            assistant_content = msg.content or ""
+            msg = response["choices"][0]["message"]
+            assistant_content = _normalize_content(msg.get("content"))
+            tool_calls = msg.get("tool_calls") or []
 
             assistant_message: dict[str, Any] = {
                 "role": "assistant",
                 "content": assistant_content,
             }
-            if getattr(msg, "tool_calls", None):
-                assistant_message["tool_calls"] = [tc.model_dump() for tc in msg.tool_calls]
+            if tool_calls:
+                assistant_message["tool_calls"] = tool_calls
             messages.append(assistant_message)
 
-            if getattr(msg, "tool_calls", None):
-                for tc in msg.tool_calls:
+            if tool_calls:
+                for tc in tool_calls:
                     try:
-                        args = json.loads(tc.function.arguments or "{}")
+                        args = json.loads(tc.get("function", {}).get("arguments") or "{}")
                     except json.JSONDecodeError:
                         args = {}
-                    result = execute_tool(tc.function.name, args, self.tool_ctx)
+                    result = execute_tool(tc.get("function", {}).get("name", ""), args, self.tool_ctx)
                     messages.append(
                         {
                             "role": "tool",
-                            "tool_call_id": tc.id,
+                            "tool_call_id": tc.get("id", ""),
                             "content": result,
                         }
                     )
